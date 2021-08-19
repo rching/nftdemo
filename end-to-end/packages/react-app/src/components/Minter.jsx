@@ -12,10 +12,16 @@ async function mintNFT({contract, ownerAddress, provider, gasPrice, setStatus, i
   // First we use the nft.storage client library to add the image and metadata to IPFS / Filecoin
   const client = new NFTStorage({ token: NFT_STORAGE_KEY });
   setStatus("Uploading to nft.storage...")
+  const cid = await client.storeBlob(image);
+  const price = 10;
   const metadata = await client.store({
     name,
     description,
-    image : image,
+    image : new Blob([], {type:"image/jpg"}),
+    price,
+    properties : {
+       cid : cid
+    }
   });
   setStatus(`Upload complete! Minting token with metadata URI: ${metadata.url}`);
 
@@ -106,7 +112,7 @@ export default function Minter({
     </div>
   );
 
-  const preview = previewURL ? <img src={previewURL} style={{maxWidth: "800px"}}/> : <div/>
+  const preview = previewURL ? <video autoplay="true" src={previewURL} style={{maxWidth: "800px"}}/> : <div/>
 
   const nameField = (
     <Input placeholder="Enter a name for your NFT" onChange={e => {

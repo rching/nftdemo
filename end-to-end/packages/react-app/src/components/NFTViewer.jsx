@@ -20,7 +20,8 @@ async function fetchIPFSJSON(ipfsURI) {
 
 async function getNFT({contract, provider, tokenId}) {
   const metadataURI = await contract.tokenURI(tokenId);
-  console.log('metadata uri: ', metadataURI);
+   console.log('metadata uri: ', metadataURI);
+   //return makeGatewayURL(metadataURI);
   
   const metadata = await fetchIPFSJSON(metadataURI);
   console.log('metadata: ', metadata)
@@ -40,12 +41,15 @@ function NFTCard({
 }) {
   return (
     <Card>
-      <img src={nftData.image} style={{maxWidth: "800px"}}/>
+      <video autoplay="true" src={"https://dweb.link/ipfs/"+nftData.properties.cid} style={{maxWidth: "800px"}}/>
       <div>
         Name: {nftData.name}
       </div>
       <div>
         Description: {nftData.description}
+      </div>
+      <div>
+        Price: {nftData.price}
       </div>
     </Card>
   );
@@ -98,7 +102,8 @@ export default function NFTViewer({
     setSelectedToken(newTokenId);
     setLoading(true);
     getNFT({ contract, provider, tokenId: newTokenId }).then(nft => {
-      setNFTData(nft);
+      console.log(nft);
+       setNFTData(nft);
       setLoading(false);
       setErrorMessage("");
     }).catch(e => {
@@ -114,7 +119,7 @@ export default function NFTViewer({
       <Card
         title={
           <div>
-            View an NFT
+            Gallery
             <div style={{ float: "right" }}>
               <Account
                 address={address}
